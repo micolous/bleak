@@ -24,13 +24,23 @@ async def discover(
         timeout (float): duration of scanning period
         loop (Event Loop): Event Loop to use
 
+    Keyword Args:
+        filter_dups (bool): If True (default), duplicate advertisements from
+            the same device will be filtered.
+        service_uuids (list[str]): Filters results to those with this service
+            UUID.
+
     """
     loop = loop if loop else asyncio.get_event_loop()
 
     if not cbapp.central_manager_delegate.enabled:
         raise BleakError("Bluetooth device is turned off")
 
-    scan_options = {"timeout": timeout}
+    scan_options = {
+        "timeout": timeout,
+        "filter_dups": kwargs.get("filter_dups", True),
+        "service_uuids": kwargs.get("service_uuids", []),
+    }
 
     await cbapp.central_manager_delegate.scanForPeripherals_(scan_options)
 

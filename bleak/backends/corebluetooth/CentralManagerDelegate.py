@@ -98,6 +98,7 @@ class CentralManagerDelegate(NSObject):
         """
         # remove old
         self.devices = {}
+        options = {}
         service_uuids = []
         if "service_uuids" in scan_options:
             service_uuids_str = scan_options["service_uuids"]
@@ -109,8 +110,13 @@ class CentralManagerDelegate(NSObject):
         if "timeout" in scan_options:
             timeout = float(scan_options["timeout"])
 
+        if "filter_dups" in scan_options:
+            # Linux "filters", macOS "allows"
+            allow_duplicates = not scan_options["filter_dups"]
+            options["kCBScanOptionAllowDuplicates"] = objc.YES if allow_duplicates else objc.NO
+
         self.central_manager.scanForPeripheralsWithServices_options_(
-            service_uuids, None
+            service_uuids, options
         )
 
         if timeout > 0:

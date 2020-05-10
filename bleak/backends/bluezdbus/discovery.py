@@ -69,6 +69,8 @@ async def discover(timeout=5.0, loop=None, **kwargs):
     Keyword Args:
         device (str): Bluetooth device to use for discovery.
         filters (dict): A dict of filters to be applied on discovery.
+        filter_dups (bool): If True (default), duplicate advertisements from
+            the same device will be filtered.
 
     Returns:
         List of tuples containing name, address and signal strength
@@ -85,6 +87,8 @@ async def discover(timeout=5.0, loop=None, **kwargs):
     # Discovery filters
     filters = kwargs.get("filters", {})
     filters["Transport"] = "le"
+    if "DuplicateData" not in filters:
+        filters["DuplicateData"] = kwargs.get("filter_dups", True)
 
     def parse_msg(message):
         if message.member == "InterfacesAdded":
