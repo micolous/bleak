@@ -220,6 +220,9 @@ async def discover(timeout=5.0, loop=None, **kwargs):
             continue
         uuids = props.get("UUIDs", [])
         manufacturer_data = props.get("ManufacturerData", {})
+        # Convert any manufacturer data to bytes
+        for k in manufacturer_data:
+            manufacturer_data[k] = bytes(manufacturer_data[k])
         discovered_devices.append(
             BLEDevice(
                 address,
